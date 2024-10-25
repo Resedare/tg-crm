@@ -33,4 +33,4 @@ export const groupsNames = [
   { name: "Ежедневные задания | Семья" },
 ];
 
-export const statuses = ["all", "0", "1"];
+export const statuses = ["0", "1"];

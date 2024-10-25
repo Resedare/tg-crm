@@ -1,12 +1,21 @@
-import { IconButton, Card, Container, Stack, Typography } from "@mui/material";
+"use client";
+
+import {
+  IconButton,
+  Card,
+  Container,
+  Stack,
+  Typography,
+  Button,
+} from "@mui/material";
 import React from "react";
 import {
   ArrowBack,
   ArrowForward,
   Close,
   CheckBox,
-  CheckBoxOutlineBlank,
   Repeat,
+  Save,
 } from "@mui/icons-material";
 
 const PostCard = () => {
@@ -19,7 +28,10 @@ const PostCard = () => {
         p={2}
         height={"100%"}
       >
-        <Typography>Хэш поста</Typography>
+        <Stack direction="row" justifyContent={"center"}>
+          <Typography>Хэш поста </Typography>&nbsp;
+          <Typography>(категория)</Typography>
+        </Stack>
         <Card
           sx={{
             backgroundColor: "lightblue",
@@ -98,6 +110,9 @@ const PostCard = () => {
           <IconButton>
             {/* some condition ? <CheckBoxIcon /> : <CheckBoxOutlineBlankIcon /> */}
             {<CheckBox sx={{ fontSize: "40px" }} />}
+          </IconButton>
+          <IconButton>
+            <Save sx={{ fontSize: "40px" }} />
           </IconButton>
           <IconButton>
             <ArrowForward sx={{ fontSize: "40px" }} />
