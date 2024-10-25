@@ -3,7 +3,9 @@ export interface GroupInterface {
 }
 
 export interface PostInterface {
-  id: string;
+  category: string;
+  id?: string | null;
+  hash: string;
   title: string;
   img: string;
   description: string;
