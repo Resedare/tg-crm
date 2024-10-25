@@ -2,6 +2,7 @@
 
 import {
   Box,
+  Button,
   Chip,
   Divider,
   MenuItem,
@@ -17,6 +18,7 @@ import {
   PostInterface,
   Status,
 } from "@/app/__mocks__/groups-types";
+import { getAllPosts } from "@/app/api/routes";
 
 const Sidebar = () => {
   const [currentGroup, setCurrentGroup] = useState<GroupInterface | null>(null);
@@ -27,6 +29,12 @@ const Sidebar = () => {
   };
   const handleChangeStatus = (e: SelectChangeEvent): void => {
     setCurrentStatus(e.target.value as Status);
+  };
+
+  const handleGetPosts = () => {
+    getAllPosts("1").then((res) => {
+      console.log(res);
+    });
   };
 
   return (
@@ -43,6 +51,7 @@ const Sidebar = () => {
           <Typography>Текущая группа</Typography>
           <Select
             value={currentGroup?.name}
+            defaultValue=""
             onChange={handleChangeGroup}
             sx={{ backgroundColor: "white" }}
           >
@@ -76,6 +85,9 @@ const Sidebar = () => {
               );
             })}
           </Select>
+          <Button variant="contained" onClick={handleGetPosts}>
+            Применить
+          </Button>
         </Stack>
         <Stack spacing={1}>
           <Typography>Посты</Typography>
