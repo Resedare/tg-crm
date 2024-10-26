@@ -3,8 +3,6 @@
 import {
   Box,
   Button,
-  Chip,
-  Divider,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -12,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { groupsNames, statuses } from "@/app/__mocks__/groups";
+import { statuses } from "@/app/__mocks__/groups";
 import {
   GroupInterface,
   PostInterface,
@@ -23,17 +21,19 @@ import { getAllPosts } from "@/app/api/routes";
 const Sidebar = () => {
   const [currentGroup, setCurrentGroup] = useState<GroupInterface | null>(null);
   const [currentStatus, setCurrentStatus] = useState<Status>("");
+  const [posts, setPosts] = useState<PostInterface[]>([]);
 
   const handleChangeGroup = (e: SelectChangeEvent): void => {
     setCurrentGroup(e.target);
   };
+
   const handleChangeStatus = (e: SelectChangeEvent): void => {
     setCurrentStatus(e.target.value as Status);
   };
 
   const handleGetPosts = () => {
-    getAllPosts("1").then((res) => {
-      console.log(res);
+    getAllPosts(currentStatus).then((res) => {
+      setPosts(res);
     });
   };
 
@@ -41,7 +41,8 @@ const Sidebar = () => {
     <Box sx={{ height: "100dvh" }}>
       <Box
         sx={{
-          minWidth: "30%",
+          width: "500px",
+          maxWidth: "500px",
           height: "100%",
           backgroundColor: "lightblue",
           padding: "20px",
@@ -58,13 +59,6 @@ const Sidebar = () => {
             <MenuItem value={""}>
               <em>None</em>
             </MenuItem>
-            {groupsNames.map((group) => {
-              return (
-                <MenuItem value={group.name} key={group.name}>
-                  {group.name}
-                </MenuItem>
-              );
-            })}
           </Select>
         </Stack>
         <Stack spacing={2}>
@@ -89,21 +83,35 @@ const Sidebar = () => {
             Применить
           </Button>
         </Stack>
-        <Stack spacing={1}>
+        <Stack spacing={1} sx={{ marginTop: "20px" }}>
           <Typography>Посты</Typography>
-          <Stack spacing={2}>
-            {groupsNames[0].posts?.map((post: PostInterface) => {
-              return (
-                <Stack key={post.id} spacing={2}>
-                  <Chip
-                    sx={{ maxWidth: "80%" }}
-                    label={`ID: ${post.id} Заголовок: ${post.title}`}
-                  />
-                  <Divider />
-                </Stack>
-              );
-            })}
-          </Stack>
+          {posts.length > 0 ? (
+            posts.map((post, index) => (
+              <Box
+                key={post.id}
+                sx={{
+                  padding: "10px",
+                  backgroundColor: "#ffffff",
+                  borderRadius: "4px",
+                  transition: "all 0.3s ease",
+                  cursor: "pointer",
+                  userSelect: "none",
+                  "&:hover": {
+                    backgroundColor: "#f1f1f1",
+                  },
+                  "&:active": {
+                    backgroundColor: "#c2c2c2",
+                  },
+                }}
+              >
+                <Typography>
+                  {index + 1}. {post.title}
+                </Typography>
+              </Box>
+            ))
+          ) : (
+            <Typography>Нет постов для отображения</Typography>
+          )}
         </Stack>
       </Box>
     </Box>
