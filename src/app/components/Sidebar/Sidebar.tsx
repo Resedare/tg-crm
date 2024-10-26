@@ -28,7 +28,7 @@ const Sidebar = () => {
   };
 
   const handleGetPosts = () => {
-    getAllPosts(currentStatus).then((res) => {
+    getAllPosts(currentStatus ? currentStatus : null).then((res) => {
       setPosts(res);
     });
   };
@@ -51,6 +51,7 @@ const Sidebar = () => {
             defaultValue=""
             onChange={handleChangeGroup}
             sx={{ backgroundColor: "white" }}
+            displayEmpty
           >
             <MenuItem value={""}>
               <em>None</em>
@@ -63,6 +64,7 @@ const Sidebar = () => {
             value={currentStatus}
             onChange={handleChangeStatus}
             sx={{ backgroundColor: "white" }}
+            displayEmpty
           >
             <MenuItem value={""}>
               <em>None</em>

@@ -11,4 +11,4 @@ export interface PostInterface {
   description: string;
   status: string;
 }
-export type Status = "0" | "1" | undefined | string;
+export type Status = "0" | "1" | "";
