@@ -17,8 +17,12 @@ import {
   Repeat,
   Save,
 } from "@mui/icons-material";
+import { useAppSelector } from "@/store/hooks";
+import { selectCurrentPost } from "@/store/slices/postSlice";
 
 const PostCard = () => {
+  const currentPost = useAppSelector(selectCurrentPost);
+
   return (
     <Container sx={{ width: "40%", height: "100dvh" }}>
       <Stack
@@ -29,8 +33,8 @@ const PostCard = () => {
         height={"100%"}
       >
         <Stack direction="row" justifyContent={"center"}>
-          <Typography>Хэш поста </Typography>&nbsp;
-          <Typography>(категория)</Typography>
+          <Typography>{currentPost?.hash} </Typography>&nbsp;
+          <Typography>{currentPost?.category}</Typography>
         </Stack>
         <Card
           sx={{
@@ -45,13 +49,8 @@ const PostCard = () => {
           >
             <Stack>
               <Typography>Мини-задание:</Typography>
-              <Typography>"Название"</Typography>
+              <Typography>{currentPost?.title}</Typography>
             </Stack>
-            <IconButton
-              sx={{ position: "absolute", right: 0, top: 0, bottom: 0 }}
-            >
-              <Repeat sx={{ fontSize: "36px" }} />
-            </IconButton>
           </Stack>
         </Card>
         <Card
@@ -68,7 +67,7 @@ const PostCard = () => {
           >
             <Stack>
               <Typography>Изображение</Typography>
-              <Typography>"Название"</Typography>
+              <Typography>{currentPost?.img}</Typography>
             </Stack>
             <IconButton
               sx={{ position: "absolute", right: 0, top: 0, bottom: 0 }}
@@ -91,7 +90,7 @@ const PostCard = () => {
           >
             <Stack>
               <Typography>Мини-задание:</Typography>
-              <Typography>Текст</Typography>
+              <Typography>{currentPost?.description}</Typography>
             </Stack>
             <IconButton
               sx={{ position: "absolute", right: 0, top: 0, bottom: 0 }}

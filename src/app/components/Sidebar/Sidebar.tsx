@@ -9,18 +9,23 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GroupInterface, PostInterface, Status } from "@/app/utils/types";
 import { getAllPosts } from "@/app/api/routes";
 import { statuses } from "@/app/__mocks__/groups";
-import { fetchPostInfo } from "@/store/slices/postSlice";
-import { useAppDispatch } from "@/store/hooks";
+import {
+  fetchPostInfo,
+  selectCurrentPost,
+  updateCurrentPost,
+} from "@/store/slices/postSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
 const Sidebar = () => {
   const [currentGroup, setCurrentGroup] = useState<GroupInterface | null>(null);
-  const dispatch = useAppDispatch();
   const [currentStatus, setCurrentStatus] = useState<Status>("");
   const [posts, setPosts] = useState<PostInterface[]>([]);
+  const currentPost = useAppSelector(selectCurrentPost);
+  const dispatch = useAppDispatch();
 
   const handleChangeGroup = (e: SelectChangeEvent): void => {
     setCurrentGroup(e.target);
@@ -39,10 +44,14 @@ const Sidebar = () => {
   const handleChosePost = (hash: string) => {
     dispatch(fetchPostInfo(hash))
       .unwrap()
-      .then((res) => {
-        console.log(res);
+      .then((post) => {
+        dispatch(updateCurrentPost(post));
+      })
+      .catch((error) => {
+        console.error("Ошибка при выборе поста:", error);
       });
   };
+
   return (
     <Box sx={{ height: "100dvh" }}>
       <Box
@@ -104,6 +113,7 @@ const Sidebar = () => {
                   borderRadius: "4px",
                   transition: "all 0.3s ease",
                   cursor: "pointer",
+                  textAlign: "left",
                   userSelect: "none",
                   "&:hover": {
                     backgroundColor: "#f1f1f1",
