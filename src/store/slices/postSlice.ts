@@ -1,9 +1,11 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { getPostInfo, savePost, deletePost } from "@/app/api/routes";
 import { PostInterface } from "@/app/utils/types";
+import { RootState } from "..";
 
 interface PostState {
   post: PostInterface | null;
+  currentPost: PostInterface | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 }
@@ -49,6 +51,7 @@ export const deletePostData = createAsyncThunk(
 
 const initialState: PostState = {
   post: null,
+  currentPost: null,
   status: "idle",
   error: null,
 };
@@ -56,7 +59,11 @@ const initialState: PostState = {
 const postSlice = createSlice({
   name: "post",
   initialState,
-  reducers: {},
+  reducers: {
+    updateCurrentPost: (state, action: PayloadAction<PostInterface>) => {
+      state.currentPost = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchPostInfo.pending, (state) => {
@@ -105,5 +112,8 @@ const postSlice = createSlice({
       });
   },
 });
+export const selectCurrentPost = (state: RootState) => state.posts.currentPost;
+
+export const { updateCurrentPost } = postSlice.actions;
 
 export default postSlice.reducer;
