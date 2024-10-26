@@ -13,9 +13,12 @@ import React, { useState } from "react";
 import { GroupInterface, PostInterface, Status } from "@/app/utils/types";
 import { getAllPosts } from "@/app/api/routes";
 import { statuses } from "@/app/__mocks__/groups";
+import { fetchPostInfo } from "@/store/slices/postSlice";
+import { useAppDispatch } from "@/store/hooks";
 
 const Sidebar = () => {
   const [currentGroup, setCurrentGroup] = useState<GroupInterface | null>(null);
+  const dispatch = useAppDispatch();
   const [currentStatus, setCurrentStatus] = useState<Status>("");
   const [posts, setPosts] = useState<PostInterface[]>([]);
 
@@ -33,6 +36,13 @@ const Sidebar = () => {
     });
   };
 
+  const handleChosePost = (hash: string) => {
+    dispatch(fetchPostInfo(hash))
+      .unwrap()
+      .then((res) => {
+        console.log(res);
+      });
+  };
   return (
     <Box sx={{ height: "100dvh" }}>
       <Box
@@ -85,8 +95,9 @@ const Sidebar = () => {
           <Typography>Посты</Typography>
           {posts.length > 0 ? (
             posts.map((post, index) => (
-              <Box
-                key={post.id}
+              <Button
+                key={post.hash}
+                onClick={() => handleChosePost(post.hash)}
                 sx={{
                   padding: "10px",
                   backgroundColor: "#ffffff",
@@ -105,7 +116,7 @@ const Sidebar = () => {
                 <Typography>
                   {index + 1}. {post.title}
                 </Typography>
-              </Box>
+              </Button>
             ))
           ) : (
             <Typography>Нет постов для отображения</Typography>
