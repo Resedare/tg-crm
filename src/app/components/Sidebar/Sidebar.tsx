@@ -10,13 +10,9 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { statuses } from "@/app/__mocks__/groups";
-import {
-  GroupInterface,
-  PostInterface,
-  Status,
-} from "@/app/__mocks__/groups-types";
+import { GroupInterface, PostInterface, Status } from "@/app/utils/types";
 import { getAllPosts } from "@/app/api/routes";
+import { statuses } from "@/app/__mocks__/groups";
 
 const Sidebar = () => {
   const [currentGroup, setCurrentGroup] = useState<GroupInterface | null>(null);
