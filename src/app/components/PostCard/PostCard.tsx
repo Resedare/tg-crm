@@ -17,8 +17,36 @@ import {
   Repeat,
   Save,
 } from "@mui/icons-material";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  generatePostDescriptionData,
+  savePostData,
+  selectCurrentPost,
+  updateCurrentPostDescription,
+} from "@/store/slices/postSlice";
 
 const PostCard = () => {
+  const currentPost = useAppSelector(selectCurrentPost);
+  const dispatch = useAppDispatch();
+
+  const handleGenerateDescription = () => {
+    if (currentPost) {
+      dispatch(
+        generatePostDescriptionData({
+          text: currentPost?.title,
+          category: currentPost?.category,
+        })
+      )
+        .unwrap()
+        .then((res) => dispatch(updateCurrentPostDescription(res.text)));
+    }
+  };
+
+  const handleSavePostData = () => {
+    if (currentPost) {
+      dispatch(savePostData(currentPost));
+    }
+  };
   return (
     <Container sx={{ width: "40%", height: "100dvh" }}>
       <Stack
@@ -28,10 +56,32 @@ const PostCard = () => {
         p={2}
         height={"100%"}
       >
-        <Stack direction="row" justifyContent={"center"}>
-          <Typography>Хэш поста </Typography>&nbsp;
-          <Typography>(категория)</Typography>
+        <Stack
+          direction="row"
+          justifyContent={"center"}
+          alignItems="center"
+          spacing={1}
+        >
+          <Typography
+            sx={{
+              color: "gray",
+              fontWeight: "bold",
+            }}
+          >
+            {currentPost?.hash}
+          </Typography>
+          <Typography>|</Typography>
+          <Typography
+            sx={{
+              color: "#1976d2",
+              fontWeight: "bold",
+              letterSpacing: "0.1em",
+            }}
+          >
+            {currentPost?.category}
+          </Typography>
         </Stack>
+
         <Card
           sx={{
             backgroundColor: "lightblue",
@@ -45,13 +95,8 @@ const PostCard = () => {
           >
             <Stack>
               <Typography>Мини-задание:</Typography>
-              <Typography>"Название"</Typography>
+              <Typography>{currentPost?.title}</Typography>
             </Stack>
-            <IconButton
-              sx={{ position: "absolute", right: 0, top: 0, bottom: 0 }}
-            >
-              <Repeat sx={{ fontSize: "36px" }} />
-            </IconButton>
           </Stack>
         </Card>
         <Card
@@ -68,7 +113,7 @@ const PostCard = () => {
           >
             <Stack>
               <Typography>Изображение</Typography>
-              <Typography>"Название"</Typography>
+              <Typography>{currentPost?.img}</Typography>
             </Stack>
             <IconButton
               sx={{ position: "absolute", right: 0, top: 0, bottom: 0 }}
@@ -91,10 +136,11 @@ const PostCard = () => {
           >
             <Stack>
               <Typography>Мини-задание:</Typography>
-              <Typography>Текст</Typography>
+              <Typography>{currentPost?.description}</Typography>
             </Stack>
             <IconButton
               sx={{ position: "absolute", right: 0, top: 0, bottom: 0 }}
+              onClick={handleGenerateDescription}
             >
               <Repeat sx={{ fontSize: "36px" }} />
             </IconButton>
@@ -111,7 +157,7 @@ const PostCard = () => {
             {/* some condition ? <CheckBoxIcon /> : <CheckBoxOutlineBlankIcon /> */}
             {<CheckBox sx={{ fontSize: "40px" }} />}
           </IconButton>
-          <IconButton>
+          <IconButton onClick={handleSavePostData}>
             <Save sx={{ fontSize: "40px" }} />
           </IconButton>
           <IconButton>

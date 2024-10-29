@@ -1,6 +1,6 @@
 import { PostInterface, Status } from "../utils/types";
 
-export async function getAllPosts(status: Status) {
+export async function getAllPosts(status: Status | null) {
   const res = await fetch(`http://62.60.157.68:5000/list`, {
     method: "POST",
     headers: {

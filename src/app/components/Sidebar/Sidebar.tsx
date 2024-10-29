@@ -9,15 +9,23 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GroupInterface, PostInterface, Status } from "@/app/utils/types";
 import { getAllPosts } from "@/app/api/routes";
 import { statuses } from "@/app/__mocks__/groups";
+import {
+  fetchPostInfo,
+  selectCurrentPost,
+  updateCurrentPost,
+} from "@/store/slices/postSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
 const Sidebar = () => {
   const [currentGroup, setCurrentGroup] = useState<GroupInterface | null>(null);
   const [currentStatus, setCurrentStatus] = useState<Status>("");
   const [posts, setPosts] = useState<PostInterface[]>([]);
+  const currentPost = useAppSelector(selectCurrentPost);
+  const dispatch = useAppDispatch();
 
   const handleChangeGroup = (e: SelectChangeEvent): void => {
     setCurrentGroup(e.target);
@@ -28,9 +36,20 @@ const Sidebar = () => {
   };
 
   const handleGetPosts = () => {
-    getAllPosts(currentStatus).then((res) => {
+    getAllPosts(currentStatus ? currentStatus : null).then((res) => {
       setPosts(res);
     });
+  };
+
+  const handleChosePost = (hash: string) => {
+    dispatch(fetchPostInfo(hash))
+      .unwrap()
+      .then((post) => {
+        dispatch(updateCurrentPost(post));
+      })
+      .catch((error) => {
+        console.error("Ошибка при выборе поста:", error);
+      });
   };
 
   return (
@@ -42,6 +61,7 @@ const Sidebar = () => {
           height: "100%",
           backgroundColor: "lightblue",
           padding: "20px",
+          overflow: "auto",
         }}
       >
         <Stack spacing={2}>
@@ -51,6 +71,7 @@ const Sidebar = () => {
             defaultValue=""
             onChange={handleChangeGroup}
             sx={{ backgroundColor: "white" }}
+            displayEmpty
           >
             <MenuItem value={""}>
               <em>None</em>
@@ -63,6 +84,7 @@ const Sidebar = () => {
             value={currentStatus}
             onChange={handleChangeStatus}
             sx={{ backgroundColor: "white" }}
+            displayEmpty
           >
             <MenuItem value={""}>
               <em>None</em>
@@ -83,8 +105,9 @@ const Sidebar = () => {
           <Typography>Посты</Typography>
           {posts.length > 0 ? (
             posts.map((post, index) => (
-              <Box
-                key={post.id}
+              <Button
+                key={post.hash}
+                onClick={() => handleChosePost(post.hash)}
                 sx={{
                   padding: "10px",
                   backgroundColor: "#ffffff",
@@ -92,18 +115,57 @@ const Sidebar = () => {
                   transition: "all 0.3s ease",
                   cursor: "pointer",
                   userSelect: "none",
+                  width: "100%",
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
                   "&:hover": {
+                    width: "100%",
                     backgroundColor: "#f1f1f1",
+                    whiteSpace: "normal",
+                    overflow: "visible",
                   },
                   "&:active": {
                     backgroundColor: "#c2c2c2",
                   },
                 }}
               >
-                <Typography>
-                  {index + 1}. {post.title}
-                </Typography>
-              </Box>
+                <Box
+                  sx={{
+                    textAlign: "left",
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      color: "gray",
+                      display: "inline",
+                      whiteSpace: "nowrap",
+                      textTransform: "none",
+                    }}
+                  >
+                    {index + 1} | {post.hash} |
+                  </Typography>
+                  <Typography
+                    sx={{
+                      textTransform: "none",
+                      marginLeft: "8px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      flexShrink: 1,
+                      "&:hover": {
+                        whiteSpace: "normal",
+                        overflow: "visible",
+                      },
+                    }}
+                  >
+                    {post.title}
+                  </Typography>
+                </Box>
+              </Button>
             ))
           ) : (
             <Typography>Нет постов для отображения</Typography>
