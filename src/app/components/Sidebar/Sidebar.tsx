@@ -61,6 +61,7 @@ const Sidebar = () => {
           height: "100%",
           backgroundColor: "lightblue",
           padding: "20px",
+          overflow: "auto",
         }}
       >
         <Stack spacing={2}>
@@ -113,19 +114,57 @@ const Sidebar = () => {
                   borderRadius: "4px",
                   transition: "all 0.3s ease",
                   cursor: "pointer",
-                  textAlign: "left",
                   userSelect: "none",
+                  width: "100%",
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
                   "&:hover": {
+                    width: "100%",
                     backgroundColor: "#f1f1f1",
+                    whiteSpace: "normal",
+                    overflow: "visible",
                   },
                   "&:active": {
                     backgroundColor: "#c2c2c2",
                   },
                 }}
               >
-                <Typography>
-                  {index + 1}. {post.title}
-                </Typography>
+                <Box
+                  sx={{
+                    textAlign: "left",
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      color: "gray",
+                      display: "inline",
+                      whiteSpace: "nowrap",
+                      textTransform: "none",
+                    }}
+                  >
+                    {index + 1} | {post.hash} |
+                  </Typography>
+                  <Typography
+                    sx={{
+                      textTransform: "none",
+                      marginLeft: "8px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      flexShrink: 1,
+                      "&:hover": {
+                        whiteSpace: "normal",
+                        overflow: "visible",
+                      },
+                    }}
+                  >
+                    {post.title}
+                  </Typography>
+                </Box>
               </Button>
             ))
           ) : (

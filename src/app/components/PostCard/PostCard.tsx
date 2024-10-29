@@ -32,10 +32,32 @@ const PostCard = () => {
         p={2}
         height={"100%"}
       >
-        <Stack direction="row" justifyContent={"center"}>
-          <Typography>{currentPost?.hash} </Typography>&nbsp;
-          <Typography>{currentPost?.category}</Typography>
+        <Stack
+          direction="row"
+          justifyContent={"center"}
+          alignItems="center"
+          spacing={1}
+        >
+          <Typography
+            sx={{
+              color: "gray",
+              fontWeight: "bold",
+            }}
+          >
+            {currentPost?.hash}
+          </Typography>
+          <Typography>|</Typography>
+          <Typography
+            sx={{
+              color: "#1976d2",
+              fontWeight: "bold",
+              letterSpacing: "0.1em",
+            }}
+          >
+            {currentPost?.category}
+          </Typography>
         </Stack>
+
         <Card
           sx={{
             backgroundColor: "lightblue",
