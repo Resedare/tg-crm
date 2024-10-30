@@ -11,12 +11,36 @@ import {
   Save,
   Add,
 } from "@mui/icons-material";
-import { useAppSelector } from "@/store/hooks";
-import { selectCurrentPost } from "@/store/slices";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  generatePostDescriptionData,
+  savePostData,
+  selectCurrentPost,
+  updateCurrentPostDescription,
+} from "@/store/slices/postSlice";
 
 export const PostCard = () => {
   const currentPost = useAppSelector(selectCurrentPost);
+  const dispatch = useAppDispatch();
 
+  const handleGenerateDescription = () => {
+    if (currentPost) {
+      dispatch(
+        generatePostDescriptionData({
+          text: currentPost?.title,
+          category: currentPost?.category,
+        })
+      )
+        .unwrap()
+        .then((res) => dispatch(updateCurrentPostDescription(res.text)));
+    }
+  };
+
+  const handleSavePostData = () => {
+    if (currentPost) {
+      dispatch(savePostData(currentPost));
+    }
+  };
   return (
     <Container
       sx={{
@@ -100,7 +124,7 @@ export const PostCard = () => {
             boxShadow: 4,
           }}
         >
-          <IconButton sx={{ position: "absolute", right: 8, top: 8 }}>
+          <IconButton sx={{ position: "absolute", right: 8, top: 8 }} onClick={handleGenerateDescription}>
             <Repeat sx={{ fontSize: "28px" }} />
           </IconButton>
           <Stack spacing={1}>
@@ -126,12 +150,12 @@ export const PostCard = () => {
           <IconButton>
             <Add sx={{ fontSize: "32px" }} />
           </IconButton>
-          <IconButton>
-            <Save sx={{ fontSize: "32px" }} />
-          </IconButton>
+ 
           <IconButton>
             <CheckBox sx={{ fontSize: "32px" }} />
-          </IconButton>
+          <IconButton onClick={handleSavePostData}>
+            <Save sx={{ fontSize: "40px" }} />
+              </IconButton>
           <IconButton>
             <ArrowForward sx={{ fontSize: "32px" }} />
           </IconButton>

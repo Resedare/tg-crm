@@ -1,5 +1,10 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { getPostInfo, savePost, deletePost } from "@/app/api/routes";
+import {
+  getPostInfo,
+  savePost,
+  deletePost,
+  generatePostDescription,
+} from "@/app/api/routes";
 import { PostInterface } from "@/app/utils/types";
 import { RootState } from "..";
 
@@ -49,6 +54,21 @@ export const deletePostData = createAsyncThunk(
   }
 );
 
+export const generatePostDescriptionData = createAsyncThunk(
+  "post/generatePostDescriptionData",
+  async (
+    { text, category }: { text: string; category: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const res = await generatePostDescription(text, category);
+      return res;
+    } catch (e: any) {
+      return rejectWithValue(e.message);
+    }
+  }
+);
+
 const initialState: PostState = {
   post: null,
   currentPost: null,
@@ -62,6 +82,11 @@ const postSlice = createSlice({
   reducers: {
     updateCurrentPost: (state, action: PayloadAction<PostInterface>) => {
       state.currentPost = action.payload;
+    },
+    updateCurrentPostDescription: (state, action: PayloadAction<string>) => {
+      if (state.currentPost) {
+        state.currentPost.description = action.payload;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -115,6 +140,7 @@ const postSlice = createSlice({
 
 export const selectCurrentPost = (state: RootState) => state.posts.currentPost;
 
-export const { updateCurrentPost } = postSlice.actions;
+export const { updateCurrentPost, updateCurrentPostDescription } =
+  postSlice.actions;
 
 export default postSlice.reducer;
