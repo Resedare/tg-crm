@@ -1,5 +1,5 @@
 export interface GroupInterface {
-  name: string;
+  value: string;
 }
 
 export interface PostInterface {

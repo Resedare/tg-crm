@@ -15,6 +15,7 @@ import { getAllPosts } from "@/app/api";
 import { GroupInterface, PostInterface, Status } from "@/app/utils/types";
 import { useAppDispatch } from "@/store/hooks";
 import { fetchPostInfo, updateCurrentPost } from "@/store/slices";
+import { categories } from "@/app/utils/constants";
 
 export const Sidebar = () => {
   const [currentGroup, setCurrentGroup] = useState<GroupInterface | null>(null);
@@ -33,7 +34,14 @@ export const Sidebar = () => {
 
   const handleGetPosts = () => {
     getAllPosts(currentStatus ? currentStatus : null).then((res) => {
-      setPosts(res);
+      if (currentGroup?.value) {
+        const filteredPosts = res.filter(
+          (post: PostInterface) => post.category == currentGroup.value
+        );
+        setPosts(filteredPosts);
+      } else {
+        setPosts(res);
+      }
     });
   };
 
@@ -63,7 +71,7 @@ export const Sidebar = () => {
         <Stack spacing={2}>
           <Typography>Текущая группа</Typography>
           <Select
-            value={currentGroup?.name}
+            value={currentGroup?.value}
             defaultValue=""
             onChange={handleChangeGroup}
             sx={{ backgroundColor: "white" }}
@@ -72,6 +80,13 @@ export const Sidebar = () => {
             <MenuItem value={""}>
               <em>None</em>
             </MenuItem>
+            {categories.map((category) => {
+              return (
+                <MenuItem key={category} value={category}>
+                  {category}
+                </MenuItem>
+              );
+            })}
           </Select>
         </Stack>
         <Stack spacing={2}>

@@ -4,6 +4,8 @@ import {
   savePost,
   deletePost,
   generatePostDescription,
+  generatePostImg,
+  generatePostFull,
 } from "@/app/api/routes";
 import { PostInterface } from "@/app/utils/types";
 import { RootState } from "..";
@@ -69,6 +71,33 @@ export const generatePostDescriptionData = createAsyncThunk(
   }
 );
 
+export const generatePostImgData = createAsyncThunk(
+  "post/generatePostImgData",
+  async (
+    { text, category }: { text: string; category: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const res = await generatePostImg(text, category);
+      return res;
+    } catch (e: any) {
+      return rejectWithValue(e.message);
+    }
+  }
+);
+
+export const generatePostData = createAsyncThunk(
+  "post/generatePostData",
+  async (category: string, { rejectWithValue }) => {
+    try {
+      const res = await generatePostFull(category);
+      return res;
+    } catch (e: any) {
+      return rejectWithValue(e.message);
+    }
+  }
+);
+
 const initialState: PostState = {
   post: null,
   currentPost: null,
@@ -86,6 +115,11 @@ const postSlice = createSlice({
     updateCurrentPostDescription: (state, action: PayloadAction<string>) => {
       if (state.currentPost) {
         state.currentPost.description = action.payload;
+      }
+    },
+    updateCurrentPostImg: (state, action: PayloadAction<string>) => {
+      if (state.currentPost) {
+        state.currentPost.img = action.payload;
       }
     },
   },
@@ -140,7 +174,10 @@ const postSlice = createSlice({
 
 export const selectCurrentPost = (state: RootState) => state.posts.currentPost;
 
-export const { updateCurrentPost, updateCurrentPostDescription } =
-  postSlice.actions;
+export const {
+  updateCurrentPost,
+  updateCurrentPostDescription,
+  updateCurrentPostImg,
+} = postSlice.actions;
 
 export default postSlice.reducer;
