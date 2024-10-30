@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { ReactNode } from "react";
 import "./globals.css";
-import { Providers } from "./components/Providers/Providers";
+import { Providers } from "./components";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -18,11 +19,10 @@ export const metadata: Metadata = {
   title: "TG CRM",
   description: "Manager for control posts",
 };
-
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html lang="en">

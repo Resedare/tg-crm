@@ -9,22 +9,18 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { GroupInterface, PostInterface, Status } from "@/app/utils/types";
-import { getAllPosts } from "@/app/api/routes";
+import React, { useState } from "react";
 import { statuses } from "@/app/__mocks__/groups";
-import {
-  fetchPostInfo,
-  selectCurrentPost,
-  updateCurrentPost,
-} from "@/store/slices/postSlice";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { getAllPosts } from "@/app/api";
+import { GroupInterface, PostInterface, Status } from "@/app/utils/types";
+import { useAppDispatch } from "@/store/hooks";
+import { fetchPostInfo, updateCurrentPost } from "@/store/slices";
 
-const Sidebar = () => {
+export const Sidebar = () => {
   const [currentGroup, setCurrentGroup] = useState<GroupInterface | null>(null);
   const [currentStatus, setCurrentStatus] = useState<Status>("");
   const [posts, setPosts] = useState<PostInterface[]>([]);
-  const currentPost = useAppSelector(selectCurrentPost);
+  // const currentPost = useAppSelector(selectCurrentPost);
   const dispatch = useAppDispatch();
 
   const handleChangeGroup = (e: SelectChangeEvent): void => {
@@ -175,5 +171,3 @@ const Sidebar = () => {
     </Box>
   );
 };
-
-export default Sidebar;

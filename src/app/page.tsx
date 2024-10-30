@@ -1,6 +1,5 @@
 import { Stack } from "@mui/material";
-import PostCard from "./components/PostCard/PostCard";
-import Sidebar from "./components/Sidebar/Sidebar";
+import { PostCard, Sidebar } from "./components";
 
 export default function Home() {
   return (

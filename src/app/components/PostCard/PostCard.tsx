@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  IconButton,
-  Card,
-  Container,
-  Stack,
-  Typography,
-  Button,
-} from "@mui/material";
+import { IconButton, Card, Container, Stack, Typography } from "@mui/material";
 import React from "react";
 import {
   ArrowBack,
@@ -16,22 +9,22 @@ import {
   CheckBox,
   Repeat,
   Save,
+  Add,
 } from "@mui/icons-material";
 import { useAppSelector } from "@/store/hooks";
-import { selectCurrentPost } from "@/store/slices/postSlice";
+import { selectCurrentPost } from "@/store/slices";
 
-const PostCard = () => {
+export const PostCard = () => {
   const currentPost = useAppSelector(selectCurrentPost);
 
   return (
-    <Container sx={{ width: "40%", height: "100dvh" }}>
-      <Stack
-        direction="column"
-        spacing={3}
-        textAlign={"center"}
-        p={2}
-        height={"100%"}
-      >
+    <Container
+      sx={{
+        width: "40%",
+        height: "100vh",
+      }}
+    >
+      <Stack direction="column" spacing={3} textAlign={"center"} p={2}>
         <Stack
           direction="row"
           justifyContent={"center"}
@@ -61,87 +54,89 @@ const PostCard = () => {
         <Card
           sx={{
             backgroundColor: "lightblue",
-            padding: "10px",
-            borderRadius: "10px",
+            padding: "16px",
+            borderRadius: "4px",
+            overflowY: "auto",
+            position: "relative",
+            boxShadow: 4,
           }}
         >
-          <Stack
-            direction="row"
-            sx={{ justifyContent: "center", position: "relative" }}
-          >
-            <Stack>
-              <Typography>Мини-задание:</Typography>
-              <Typography>{currentPost?.title}</Typography>
-            </Stack>
+          <IconButton sx={{ position: "absolute", right: 8, top: 8 }}>
+            <Repeat sx={{ fontSize: "28px" }} />
+          </IconButton>
+          <Stack spacing={1}>
+            <Typography fontWeight="bold">Мини-задание:</Typography>
+            <Typography>{currentPost?.title}</Typography>
           </Stack>
         </Card>
+
         <Card
           sx={{
             backgroundColor: "lightblue",
-            height: "50%",
-            padding: "10px",
-            borderRadius: "10px",
+            height: "600px",
+            padding: "16px",
+            borderRadius: "12px",
+            overflowY: "auto",
+            position: "relative",
+            boxShadow: 8,
           }}
         >
-          <Stack
-            direction="row"
-            sx={{ justifyContent: "center", position: "relative" }}
-          >
-            <Stack>
-              <Typography>Изображение</Typography>
-              <Typography>{currentPost?.img}</Typography>
-            </Stack>
-            <IconButton
-              sx={{ position: "absolute", right: 0, top: 0, bottom: 0 }}
-            >
-              <Repeat sx={{ fontSize: "36px" }} />
-            </IconButton>
+          <IconButton sx={{ position: "absolute", right: 8, top: 8 }}>
+            <Repeat sx={{ fontSize: "28px" }} />
+          </IconButton>
+          <Stack spacing={1}>
+            <Typography fontWeight="bold">Изображение</Typography>
+            <Typography>{currentPost?.img}</Typography>
           </Stack>
         </Card>
+
         <Card
           sx={{
             backgroundColor: "lightblue",
-            height: "20%",
-            padding: "10px",
-            borderRadius: "10px",
+            padding: "16px",
+            borderRadius: "4px",
+            position: "relative",
+            overflowY: "auto",
+            boxShadow: 4,
           }}
         >
-          <Stack
-            direction="row"
-            sx={{ justifyContent: "center", position: "relative" }}
-          >
-            <Stack>
-              <Typography>Мини-задание:</Typography>
-              <Typography>{currentPost?.description}</Typography>
-            </Stack>
-            <IconButton
-              sx={{ position: "absolute", right: 0, top: 0, bottom: 0 }}
-            >
-              <Repeat sx={{ fontSize: "36px" }} />
-            </IconButton>
+          <IconButton sx={{ position: "absolute", right: 8, top: 8 }}>
+            <Repeat sx={{ fontSize: "28px" }} />
+          </IconButton>
+          <Stack spacing={1}>
+            <Typography fontWeight="bold">Мини-задание:</Typography>
+            <Typography textAlign="justify">
+              {currentPost?.description}
+            </Typography>
           </Stack>
         </Card>
-        <Stack direction="row" width={"100%"} justifyContent={"space-between"}>
+
+        <Stack
+          direction="row"
+          width={"100%"}
+          justifyContent={"space-between"}
+          mt={2}
+        >
           <IconButton>
-            <ArrowBack sx={{ fontSize: "40px" }} />
+            <ArrowBack sx={{ fontSize: "32px" }} />
           </IconButton>
           <IconButton>
-            <Close sx={{ fontSize: "40px" }} />
+            <Close sx={{ fontSize: "32px" }} />
           </IconButton>
           <IconButton>
-            {/* some condition ? <CheckBoxIcon /> : <CheckBoxOutlineBlankIcon /> */}
-            {<CheckBox sx={{ fontSize: "40px" }} />}
+            <Add sx={{ fontSize: "32px" }} />
           </IconButton>
           <IconButton>
-            <Save sx={{ fontSize: "40px" }} />
+            <Save sx={{ fontSize: "32px" }} />
           </IconButton>
           <IconButton>
-            <ArrowForward sx={{ fontSize: "40px" }} />
+            <CheckBox sx={{ fontSize: "32px" }} />
+          </IconButton>
+          <IconButton>
+            <ArrowForward sx={{ fontSize: "32px" }} />
           </IconButton>
         </Stack>
       </Stack>
     </Container>
   );
 };
-
-export default PostCard;
