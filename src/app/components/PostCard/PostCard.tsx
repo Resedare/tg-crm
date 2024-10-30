@@ -124,7 +124,10 @@ export const PostCard = () => {
             boxShadow: 4,
           }}
         >
-          <IconButton sx={{ position: "absolute", right: 8, top: 8 }} onClick={handleGenerateDescription}>
+          <IconButton
+            sx={{ position: "absolute", right: 8, top: 8 }}
+            onClick={handleGenerateDescription}
+          >
             <Repeat sx={{ fontSize: "28px" }} />
           </IconButton>
           <Stack spacing={1}>
@@ -150,12 +153,13 @@ export const PostCard = () => {
           <IconButton>
             <Add sx={{ fontSize: "32px" }} />
           </IconButton>
- 
+
           <IconButton>
             <CheckBox sx={{ fontSize: "32px" }} />
+          </IconButton>
           <IconButton onClick={handleSavePostData}>
             <Save sx={{ fontSize: "40px" }} />
-              </IconButton>
+          </IconButton>
           <IconButton>
             <ArrowForward sx={{ fontSize: "32px" }} />
           </IconButton>
