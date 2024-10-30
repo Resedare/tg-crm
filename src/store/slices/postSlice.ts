@@ -137,6 +137,7 @@ const postSlice = createSlice({
       });
   },
 });
+
 export const selectCurrentPost = (state: RootState) => state.posts.currentPost;
 
 export const { updateCurrentPost, updateCurrentPostDescription } =
