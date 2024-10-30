@@ -13,16 +13,27 @@ import {
 } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
+  generatePostData,
   generatePostDescriptionData,
+  generatePostImgData,
   savePostData,
   selectCurrentPost,
+  updateCurrentPost,
   updateCurrentPostDescription,
+  updateCurrentPostImg,
 } from "@/store/slices/postSlice";
 
 export const PostCard = () => {
   const currentPost = useAppSelector(selectCurrentPost);
   const dispatch = useAppDispatch();
 
+  const handleGeneratePost = () => {
+    if (currentPost) {
+      dispatch(generatePostData(currentPost.category))
+        .unwrap()
+        .then((res) => dispatch(updateCurrentPost(res)));
+    }
+  };
   const handleGenerateDescription = () => {
     if (currentPost) {
       dispatch(
@@ -33,6 +44,19 @@ export const PostCard = () => {
       )
         .unwrap()
         .then((res) => dispatch(updateCurrentPostDescription(res.text)));
+    }
+  };
+
+  const handleGenerateImg = () => {
+    if (currentPost) {
+      dispatch(
+        generatePostImgData({
+          text: currentPost?.title,
+          category: currentPost?.category,
+        })
+      )
+        .unwrap()
+        .then((res) => dispatch(updateCurrentPostImg(res.img)));
     }
   };
 
@@ -85,9 +109,6 @@ export const PostCard = () => {
             boxShadow: 4,
           }}
         >
-          <IconButton sx={{ position: "absolute", right: 8, top: 8 }}>
-            <Repeat sx={{ fontSize: "28px" }} />
-          </IconButton>
           <Stack spacing={1}>
             <Typography fontWeight="bold">Мини-задание:</Typography>
             <Typography>{currentPost?.title}</Typography>
@@ -105,7 +126,10 @@ export const PostCard = () => {
             boxShadow: 8,
           }}
         >
-          <IconButton sx={{ position: "absolute", right: 8, top: 8 }}>
+          <IconButton
+            sx={{ position: "absolute", right: 8, top: 8 }}
+            onClick={handleGenerateImg}
+          >
             <Repeat sx={{ fontSize: "28px" }} />
           </IconButton>
           <Stack spacing={1}>
@@ -150,7 +174,7 @@ export const PostCard = () => {
           <IconButton>
             <Close sx={{ fontSize: "32px" }} />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={handleGeneratePost}>
             <Add sx={{ fontSize: "32px" }} />
           </IconButton>
 
