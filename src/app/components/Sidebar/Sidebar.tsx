@@ -9,20 +9,28 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { statuses } from "@/app/__mocks__/groups";
 import { getAllPosts } from "@/app/api";
 import { GroupInterface, PostInterface, Status } from "@/app/utils/types";
-import { useAppDispatch } from "@/store/hooks";
-import { fetchPostInfo, updateCurrentPost } from "@/store/slices";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  fetchPostInfo,
+  selectCurrentPost,
+  updateCurrentPost,
+} from "@/store/slices";
 import { categories } from "@/app/utils/constants";
 
 export const Sidebar = () => {
   const [currentGroup, setCurrentGroup] = useState<GroupInterface | null>(null);
   const [currentStatus, setCurrentStatus] = useState<Status>("");
   const [posts, setPosts] = useState<PostInterface[]>([]);
-  // const currentPost = useAppSelector(selectCurrentPost);
+  const currentPost = useAppSelector(selectCurrentPost);
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    handleGetPosts();
+  }, [currentPost]);
 
   const handleChangeGroup = (e: SelectChangeEvent): void => {
     setCurrentGroup(e.target);
@@ -32,7 +40,7 @@ export const Sidebar = () => {
     setCurrentStatus(e.target.value as Status);
   };
 
-  const handleGetPosts = () => {
+  const handleGetPosts = useCallback(() => {
     getAllPosts(currentStatus ? currentStatus : null).then((res) => {
       if (currentGroup?.value) {
         const filteredPosts = res.filter(
@@ -43,7 +51,7 @@ export const Sidebar = () => {
         setPosts(res);
       }
     });
-  };
+  }, [currentStatus, currentGroup]);
 
   const handleChosePost = (hash: string) => {
     dispatch(fetchPostInfo(hash))
@@ -55,6 +63,8 @@ export const Sidebar = () => {
         console.error("Ошибка при выборе поста:", error);
       });
   };
+
+  console.log("render");
 
   return (
     <Box sx={{ height: "100dvh" }}>

@@ -109,7 +109,7 @@ const postSlice = createSlice({
   name: "post",
   initialState,
   reducers: {
-    updateCurrentPost: (state, action: PayloadAction<PostInterface>) => {
+    updateCurrentPost: (state, action: PayloadAction<PostInterface | null>) => {
       state.currentPost = action.payload;
     },
     updateCurrentPostDescription: (state, action: PayloadAction<string>) => {
@@ -120,6 +120,11 @@ const postSlice = createSlice({
     updateCurrentPostImg: (state, action: PayloadAction<string>) => {
       if (state.currentPost) {
         state.currentPost.img = action.payload;
+      }
+    },
+    updateCurrentPostStatus: (state, action: PayloadAction<string>) => {
+      if (state.currentPost) {
+        state.currentPost.status = action.payload;
       }
     },
   },
@@ -178,6 +183,7 @@ export const {
   updateCurrentPost,
   updateCurrentPostDescription,
   updateCurrentPostImg,
+  updateCurrentPostStatus,
 } = postSlice.actions;
 
 export default postSlice.reducer;
