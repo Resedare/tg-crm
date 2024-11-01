@@ -10,9 +10,11 @@ import {
   Repeat,
   Save,
   Add,
+  CheckBoxOutlined,
 } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
+  deletePostData,
   generatePostData,
   generatePostDescriptionData,
   generatePostImgData,
@@ -21,6 +23,7 @@ import {
   updateCurrentPost,
   updateCurrentPostDescription,
   updateCurrentPostImg,
+  updateCurrentPostStatus,
 } from "@/store/slices/postSlice";
 
 export const PostCard = () => {
@@ -65,6 +68,21 @@ export const PostCard = () => {
       dispatch(savePostData(currentPost));
     }
   };
+
+  const handleUpdateStatus = () => {
+    if (currentPost) {
+      dispatch(updateCurrentPostStatus(currentPost.status === "0" ? "1" : "0"));
+    }
+  };
+
+  const handleDeletePostData = () => {
+    if (currentPost) {
+      dispatch(deletePostData(currentPost.hash)).then((res) =>
+        dispatch(updateCurrentPost(null))
+      );
+    }
+  };
+
   return (
     <Container
       sx={{
@@ -171,15 +189,19 @@ export const PostCard = () => {
           <IconButton>
             <ArrowBack sx={{ fontSize: "32px" }} />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={handleDeletePostData}>
             <Close sx={{ fontSize: "32px" }} />
           </IconButton>
           <IconButton onClick={handleGeneratePost}>
             <Add sx={{ fontSize: "32px" }} />
           </IconButton>
 
-          <IconButton>
-            <CheckBox sx={{ fontSize: "32px" }} />
+          <IconButton onClick={handleUpdateStatus}>
+            {currentPost?.status === "1" ? (
+              <CheckBox sx={{ fontSize: "32px" }} />
+            ) : (
+              <CheckBoxOutlined sx={{ fontSize: "32px" }} />
+            )}
           </IconButton>
           <IconButton onClick={handleSavePostData}>
             <Save sx={{ fontSize: "40px" }} />
