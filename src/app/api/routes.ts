@@ -34,9 +34,12 @@ export async function generatePostTitle(category: string) {
     },
     body: JSON.stringify({ category: category }),
   });
-
-  const result = await res.json();
-  return result;
+  if (res.ok) {
+    const result = await res.json();
+    return result;
+  } else {
+    console.error("Error");
+  }
 }
 
 export async function generatePostDescription(text: string, category: string) {

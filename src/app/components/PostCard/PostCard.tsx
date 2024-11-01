@@ -10,19 +10,33 @@ import {
   Repeat,
   Save,
   Add,
+  CheckBoxOutlined,
 } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
+  deletePostData,
+  generatePostData,
   generatePostDescriptionData,
+  generatePostImgData,
   savePostData,
   selectCurrentPost,
+  updateCurrentPost,
   updateCurrentPostDescription,
+  updateCurrentPostImg,
+  updateCurrentPostStatus,
 } from "@/store/slices/postSlice";
 
 export const PostCard = () => {
   const currentPost = useAppSelector(selectCurrentPost);
   const dispatch = useAppDispatch();
 
+  const handleGeneratePost = () => {
+    if (currentPost) {
+      dispatch(generatePostData(currentPost.category))
+        .unwrap()
+        .then((res) => dispatch(updateCurrentPost(res)));
+    }
+  };
   const handleGenerateDescription = () => {
     if (currentPost) {
       dispatch(
@@ -36,11 +50,39 @@ export const PostCard = () => {
     }
   };
 
+  const handleGenerateImg = () => {
+    if (currentPost) {
+      dispatch(
+        generatePostImgData({
+          text: currentPost?.title,
+          category: currentPost?.category,
+        })
+      )
+        .unwrap()
+        .then((res) => dispatch(updateCurrentPostImg(res.img)));
+    }
+  };
+
   const handleSavePostData = () => {
     if (currentPost) {
       dispatch(savePostData(currentPost));
     }
   };
+
+  const handleUpdateStatus = () => {
+    if (currentPost) {
+      dispatch(updateCurrentPostStatus(currentPost.status === "0" ? "1" : "0"));
+    }
+  };
+
+  const handleDeletePostData = () => {
+    if (currentPost) {
+      dispatch(deletePostData(currentPost.hash)).then((res) =>
+        dispatch(updateCurrentPost(null))
+      );
+    }
+  };
+
   return (
     <Container
       sx={{
@@ -85,9 +127,6 @@ export const PostCard = () => {
             boxShadow: 4,
           }}
         >
-          <IconButton sx={{ position: "absolute", right: 8, top: 8 }}>
-            <Repeat sx={{ fontSize: "28px" }} />
-          </IconButton>
           <Stack spacing={1}>
             <Typography fontWeight="bold">Мини-задание:</Typography>
             <Typography>{currentPost?.title}</Typography>
@@ -105,7 +144,10 @@ export const PostCard = () => {
             boxShadow: 8,
           }}
         >
-          <IconButton sx={{ position: "absolute", right: 8, top: 8 }}>
+          <IconButton
+            sx={{ position: "absolute", right: 8, top: 8 }}
+            onClick={handleGenerateImg}
+          >
             <Repeat sx={{ fontSize: "28px" }} />
           </IconButton>
           <Stack spacing={1}>
@@ -147,15 +189,19 @@ export const PostCard = () => {
           <IconButton>
             <ArrowBack sx={{ fontSize: "32px" }} />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={handleDeletePostData}>
             <Close sx={{ fontSize: "32px" }} />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={handleGeneratePost}>
             <Add sx={{ fontSize: "32px" }} />
           </IconButton>
 
-          <IconButton>
-            <CheckBox sx={{ fontSize: "32px" }} />
+          <IconButton onClick={handleUpdateStatus}>
+            {currentPost?.status === "1" ? (
+              <CheckBox sx={{ fontSize: "32px" }} />
+            ) : (
+              <CheckBoxOutlined sx={{ fontSize: "32px" }} />
+            )}
           </IconButton>
           <IconButton onClick={handleSavePostData}>
             <Save sx={{ fontSize: "40px" }} />
