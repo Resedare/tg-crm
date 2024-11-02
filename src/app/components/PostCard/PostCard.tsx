@@ -25,6 +25,7 @@ import {
   updateCurrentPostImg,
   updateCurrentPostStatus,
 } from "@/store/slices/postSlice";
+import Image from "next/image";
 
 export const PostCard = () => {
   const currentPost = useAppSelector(selectCurrentPost);
@@ -83,6 +84,7 @@ export const PostCard = () => {
     }
   };
 
+  console.log(currentPost?.img);
   return (
     <Container
       sx={{
@@ -152,7 +154,14 @@ export const PostCard = () => {
           </IconButton>
           <Stack spacing={1}>
             <Typography fontWeight="bold">Изображение</Typography>
-            <Typography>{currentPost?.img}</Typography>
+            {currentPost?.img && (
+              <Image
+                src={`/images/${currentPost?.img}`}
+                alt="Post image"
+                width={400}
+                height={300}
+              />
+            )}
           </Stack>
         </Card>
 
