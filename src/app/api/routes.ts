@@ -71,6 +71,7 @@ export async function generatePostImg(text: string, category: string) {
   });
 
   const result = await res.json();
+  console.log(result);
   return result;
 }
 

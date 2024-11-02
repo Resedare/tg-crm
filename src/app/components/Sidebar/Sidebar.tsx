@@ -64,8 +64,6 @@ export const Sidebar = () => {
       });
   };
 
-  console.log("render");
-
   return (
     <Box sx={{ height: "100dvh" }}>
       <Box
