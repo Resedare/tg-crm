@@ -1,11 +1,18 @@
 "use client";
 
-import { IconButton, Card, Container, Stack, Typography } from "@mui/material";
+import {
+  IconButton,
+  Card,
+  Container,
+  Stack,
+  Typography,
+  Box,
+} from "@mui/material";
 import React from "react";
 import {
   ArrowBack,
   ArrowForward,
-  Close,
+  Delete,
   CheckBox,
   Repeat,
   Save,
@@ -92,7 +99,7 @@ export const PostCard = () => {
         height: "100vh",
       }}
     >
-      <Stack direction="column" spacing={3} textAlign={"center"} p={2}>
+      <Stack direction="column" spacing={2} textAlign={"center"} p={2}>
         <Stack
           direction="row"
           justifyContent={"center"}
@@ -138,7 +145,7 @@ export const PostCard = () => {
         <Card
           sx={{
             backgroundColor: "lightblue",
-            height: "600px",
+            height: "450px",
             padding: "16px",
             borderRadius: "12px",
             overflowY: "auto",
@@ -152,15 +159,30 @@ export const PostCard = () => {
           >
             <Repeat sx={{ fontSize: "28px" }} />
           </IconButton>
-          <Stack spacing={1}>
+          <Stack
+            spacing={1}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <Typography fontWeight="bold">Изображение</Typography>
             {currentPost?.img && (
-              <Image
-                src={`/images/${currentPost?.img}`}
-                alt="Post image"
-                width={400}
-                height={300}
-              />
+              <Box
+                sx={{
+                  width: "100%",
+                  maxWidth: "55%",
+                }}
+              >
+                <Image
+                  src={`/images/${currentPost?.img}`}
+                  alt="Post image"
+                  layout="responsive"
+                  width={100}
+                  height={300}
+                />
+              </Box>
             )}
           </Stack>
         </Card>
@@ -199,7 +221,7 @@ export const PostCard = () => {
             <ArrowBack sx={{ fontSize: "32px" }} />
           </IconButton>
           <IconButton onClick={handleDeletePostData}>
-            <Close sx={{ fontSize: "32px" }} />
+            <Delete sx={{ fontSize: "32px" }} />
           </IconButton>
           <IconButton onClick={handleGeneratePost}>
             <Add sx={{ fontSize: "32px" }} />
