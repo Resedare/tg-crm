@@ -1,27 +1,18 @@
 "use client";
 
-import {
-  IconButton,
-  Card,
-  Container,
-  Stack,
-  Typography,
-  Box,
-} from "@mui/material";
+import { IconButton, Card, Container, Stack, Typography } from "@mui/material";
 import React from "react";
 import {
   ArrowBack,
   ArrowForward,
-  Delete,
+  Close,
   CheckBox,
   Repeat,
   Save,
   Add,
-  CheckBoxOutlined,
 } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
-  deletePostData,
   generatePostData,
   generatePostDescriptionData,
   generatePostImgData,
@@ -30,9 +21,7 @@ import {
   updateCurrentPost,
   updateCurrentPostDescription,
   updateCurrentPostImg,
-  updateCurrentPostStatus,
 } from "@/store/slices/postSlice";
-import Image from "next/image";
 
 export const PostCard = () => {
   const currentPost = useAppSelector(selectCurrentPost);
@@ -76,22 +65,6 @@ export const PostCard = () => {
       dispatch(savePostData(currentPost));
     }
   };
-
-  const handleUpdateStatus = () => {
-    if (currentPost) {
-      dispatch(updateCurrentPostStatus(currentPost.status === "0" ? "1" : "0"));
-    }
-  };
-
-  const handleDeletePostData = () => {
-    if (currentPost) {
-      dispatch(deletePostData(currentPost.hash)).then((res) =>
-        dispatch(updateCurrentPost(null))
-      );
-    }
-  };
-
-  console.log(currentPost?.img);
   return (
     <Container
       sx={{
@@ -99,7 +72,7 @@ export const PostCard = () => {
         height: "100vh",
       }}
     >
-      <Stack direction="column" spacing={2} textAlign={"center"} p={2}>
+      <Stack direction="column" spacing={3} textAlign={"center"} p={2}>
         <Stack
           direction="row"
           justifyContent={"center"}
@@ -145,7 +118,7 @@ export const PostCard = () => {
         <Card
           sx={{
             backgroundColor: "lightblue",
-            height: "450px",
+            height: "600px",
             padding: "16px",
             borderRadius: "12px",
             overflowY: "auto",
@@ -159,31 +132,9 @@ export const PostCard = () => {
           >
             <Repeat sx={{ fontSize: "28px" }} />
           </IconButton>
-          <Stack
-            spacing={1}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
+          <Stack spacing={1}>
             <Typography fontWeight="bold">Изображение</Typography>
-            {currentPost?.img && (
-              <Box
-                sx={{
-                  width: "100%",
-                  maxWidth: "55%",
-                }}
-              >
-                <Image
-                  src={`/images/${currentPost?.img}`}
-                  alt="Post image"
-                  layout="responsive"
-                  width={100}
-                  height={300}
-                />
-              </Box>
-            )}
+            <Typography>{currentPost?.img}</Typography>
           </Stack>
         </Card>
 
@@ -220,19 +171,14 @@ export const PostCard = () => {
           <IconButton>
             <ArrowBack sx={{ fontSize: "32px" }} />
           </IconButton>
-          <IconButton onClick={handleDeletePostData}>
-            <Delete sx={{ fontSize: "32px" }} />
+          <IconButton>
+            <Close sx={{ fontSize: "32px" }} />
           </IconButton>
           <IconButton onClick={handleGeneratePost}>
             <Add sx={{ fontSize: "32px" }} />
           </IconButton>
-
-          <IconButton onClick={handleUpdateStatus}>
-            {currentPost?.status === "1" ? (
-              <CheckBox sx={{ fontSize: "32px" }} />
-            ) : (
-              <CheckBoxOutlined sx={{ fontSize: "32px" }} />
-            )}
+          <IconButton>
+            <CheckBox sx={{ fontSize: "32px" }} />
           </IconButton>
           <IconButton onClick={handleSavePostData}>
             <Save sx={{ fontSize: "40px" }} />
