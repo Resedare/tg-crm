@@ -10,8 +10,6 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { IconButton, Card, Container, Stack, Typography } from "@mui/material";
-import React from "react";
 import {
   ArrowBack,
   ArrowForward,
@@ -20,7 +18,6 @@ import {
   Repeat,
   Save,
   Add,
-  CheckBoxOutlined,
   Edit,
 } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -96,13 +93,13 @@ export const PostCard = () => {
     }
   };
 
-  const handleDeletePostData = () => {
-    if (currentPost) {
-      dispatch(deletePostData(currentPost.hash)).then((res) =>
-        dispatch(updateCurrentPost(null))
-      );
-    }
-  };
+  // const handleDeletePostData = () => {
+  //   if (currentPost) {
+  //     dispatch(deletePostData(currentPost.hash)).then((res) =>
+  //       dispatch(updateCurrentPost(null))
+  //     );
+  //   }
+  // };
 
   const handleEditTitle = () => {
     dispatch(updateTitleEditing());
