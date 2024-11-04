@@ -1,5 +1,15 @@
 "use client";
 
+import {
+  IconButton,
+  Card,
+  Container,
+  Stack,
+  Typography,
+  Box,
+  TextField,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { IconButton, Card, Container, Stack, Typography } from "@mui/material";
 import React from "react";
 import {
@@ -10,6 +20,8 @@ import {
   Repeat,
   Save,
   Add,
+  CheckBoxOutlined,
+  Edit,
 } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
@@ -18,14 +30,26 @@ import {
   generatePostImgData,
   savePostData,
   selectCurrentPost,
+  selectTitleEditing,
   updateCurrentPost,
   updateCurrentPostDescription,
   updateCurrentPostImg,
+  updateCurrentPostStatus,
+  updateCurrentPostTitle,
+  updateTitleEditing,
 } from "@/store/slices/postSlice";
 
 export const PostCard = () => {
   const currentPost = useAppSelector(selectCurrentPost);
+  const isTitleEditing = useAppSelector(selectTitleEditing);
+  const [titleText, setTitleText] = useState<string>(currentPost?.title || "");
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (currentPost?.title) {
+      setTitleText(currentPost.title);
+    }
+  }, [currentPost?.title]);
 
   const handleGeneratePost = () => {
     if (currentPost) {
@@ -65,6 +89,33 @@ export const PostCard = () => {
       dispatch(savePostData(currentPost));
     }
   };
+
+  const handleUpdateStatus = () => {
+    if (currentPost) {
+      dispatch(updateCurrentPostStatus(currentPost.status === "0" ? "1" : "0"));
+    }
+  };
+
+  const handleDeletePostData = () => {
+    if (currentPost) {
+      dispatch(deletePostData(currentPost.hash)).then((res) =>
+        dispatch(updateCurrentPost(null))
+      );
+    }
+  };
+
+  const handleEditTitle = () => {
+    dispatch(updateTitleEditing());
+  };
+
+  const handleSaveTitle = (value: string) => {
+    if (currentPost) {
+      dispatch(updateCurrentPostTitle(value));
+      dispatch(updateTitleEditing());
+    }
+  };
+
+  console.log(currentPost);
   return (
     <Container
       sx={{
@@ -109,9 +160,31 @@ export const PostCard = () => {
             boxShadow: 4,
           }}
         >
+          {isTitleEditing ? (
+            <IconButton
+              sx={{ position: "absolute", left: 8, top: 8 }}
+              onClick={() => handleSaveTitle(titleText)}
+            >
+              <Save />
+            </IconButton>
+          ) : (
+            <IconButton
+              sx={{ position: "absolute", left: 8, top: 8 }}
+              onClick={handleEditTitle}
+            >
+              <Edit />
+            </IconButton>
+          )}
           <Stack spacing={1}>
             <Typography fontWeight="bold">Мини-задание:</Typography>
-            <Typography>{currentPost?.title}</Typography>
+            {isTitleEditing ? (
+              <TextField
+                onChange={(e) => setTitleText(e.target.value)}
+                value={titleText}
+              />
+            ) : (
+              <Typography>{currentPost?.title}</Typography>
+            )}
           </Stack>
         </Card>
 
@@ -153,6 +226,12 @@ export const PostCard = () => {
             onClick={handleGenerateDescription}
           >
             <Repeat sx={{ fontSize: "28px" }} />
+          </IconButton>
+          <IconButton
+            sx={{ position: "absolute", left: 8, top: 8 }}
+            onClick={handleGenerateImg}
+          >
+            <Edit />
           </IconButton>
           <Stack spacing={1}>
             <Typography fontWeight="bold">Мини-задание:</Typography>
