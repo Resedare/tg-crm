@@ -3,6 +3,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -17,6 +18,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   fetchPostInfo,
   selectCurrentPost,
+  selectIsLoading,
   updateCurrentPost,
 } from "@/store/slices";
 import { categories } from "@/app/utils/constants";
@@ -26,6 +28,7 @@ export const Sidebar = () => {
   const [currentStatus, setCurrentStatus] = useState<Status>("");
   const [posts, setPosts] = useState<PostInterface[]>([]);
   const currentPost = useAppSelector(selectCurrentPost);
+  const isLoading = useAppSelector(selectIsLoading);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -65,7 +68,25 @@ export const Sidebar = () => {
   };
 
   return (
-    <Box sx={{ height: "100dvh" }}>
+    <Box sx={{ height: "100dvh", position: "relative" }}>
+      {isLoading.fetchPostInfo && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "500px",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.7)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 10,
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
       <Box
         sx={{
           width: "500px",
@@ -141,8 +162,6 @@ export const Sidebar = () => {
                   "&:hover": {
                     width: "100%",
                     backgroundColor: "#f1f1f1",
-                    whiteSpace: "normal",
-                    overflow: "visible",
                   },
                   "&:active": {
                     backgroundColor: "#c2c2c2",
@@ -175,10 +194,6 @@ export const Sidebar = () => {
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       flexShrink: 1,
-                      "&:hover": {
-                        whiteSpace: "normal",
-                        overflow: "visible",
-                      },
                     }}
                   >
                     {post.title}

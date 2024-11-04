@@ -7,36 +7,46 @@ import {
   Stack,
   Typography,
   Box,
+  TextField,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ArrowBack,
   ArrowForward,
-  Delete,
+  Close,
   CheckBox,
   Repeat,
   Save,
   Add,
-  CheckBoxOutlined,
+  Edit,
 } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
-  deletePostData,
   generatePostData,
   generatePostDescriptionData,
   generatePostImgData,
   savePostData,
   selectCurrentPost,
+  selectTitleEditing,
   updateCurrentPost,
   updateCurrentPostDescription,
   updateCurrentPostImg,
   updateCurrentPostStatus,
+  updateCurrentPostTitle,
+  updateTitleEditing,
 } from "@/store/slices/postSlice";
-import Image from "next/image";
 
 export const PostCard = () => {
   const currentPost = useAppSelector(selectCurrentPost);
+  const isTitleEditing = useAppSelector(selectTitleEditing);
+  const [titleText, setTitleText] = useState<string>(currentPost?.title || "");
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (currentPost?.title) {
+      setTitleText(currentPost.title);
+    }
+  }, [currentPost?.title]);
 
   const handleGeneratePost = () => {
     if (currentPost) {
@@ -83,15 +93,26 @@ export const PostCard = () => {
     }
   };
 
-  const handleDeletePostData = () => {
+  // const handleDeletePostData = () => {
+  //   if (currentPost) {
+  //     dispatch(deletePostData(currentPost.hash)).then((res) =>
+  //       dispatch(updateCurrentPost(null))
+  //     );
+  //   }
+  // };
+
+  const handleEditTitle = () => {
+    dispatch(updateTitleEditing());
+  };
+
+  const handleSaveTitle = (value: string) => {
     if (currentPost) {
-      dispatch(deletePostData(currentPost.hash)).then((res) =>
-        dispatch(updateCurrentPost(null))
-      );
+      dispatch(updateCurrentPostTitle(value));
+      dispatch(updateTitleEditing());
     }
   };
 
-  console.log(currentPost?.img);
+  console.log(currentPost);
   return (
     <Container
       sx={{
@@ -99,7 +120,7 @@ export const PostCard = () => {
         height: "100vh",
       }}
     >
-      <Stack direction="column" spacing={2} textAlign={"center"} p={2}>
+      <Stack direction="column" spacing={3} textAlign={"center"} p={2}>
         <Stack
           direction="row"
           justifyContent={"center"}
@@ -136,16 +157,38 @@ export const PostCard = () => {
             boxShadow: 4,
           }}
         >
+          {isTitleEditing ? (
+            <IconButton
+              sx={{ position: "absolute", left: 8, top: 8 }}
+              onClick={() => handleSaveTitle(titleText)}
+            >
+              <Save />
+            </IconButton>
+          ) : (
+            <IconButton
+              sx={{ position: "absolute", left: 8, top: 8 }}
+              onClick={handleEditTitle}
+            >
+              <Edit />
+            </IconButton>
+          )}
           <Stack spacing={1}>
             <Typography fontWeight="bold">Мини-задание:</Typography>
-            <Typography>{currentPost?.title}</Typography>
+            {isTitleEditing ? (
+              <TextField
+                onChange={(e) => setTitleText(e.target.value)}
+                value={titleText}
+              />
+            ) : (
+              <Typography>{currentPost?.title}</Typography>
+            )}
           </Stack>
         </Card>
 
         <Card
           sx={{
             backgroundColor: "lightblue",
-            height: "450px",
+            height: "600px",
             padding: "16px",
             borderRadius: "12px",
             overflowY: "auto",
@@ -159,31 +202,9 @@ export const PostCard = () => {
           >
             <Repeat sx={{ fontSize: "28px" }} />
           </IconButton>
-          <Stack
-            spacing={1}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
+          <Stack spacing={1}>
             <Typography fontWeight="bold">Изображение</Typography>
-            {currentPost?.img && (
-              <Box
-                sx={{
-                  width: "100%",
-                  maxWidth: "55%",
-                }}
-              >
-                <Image
-                  src={`/images/${currentPost?.img}`}
-                  alt="Post image"
-                  layout="responsive"
-                  width={100}
-                  height={300}
-                />
-              </Box>
-            )}
+            <Typography>{currentPost?.img}</Typography>
           </Stack>
         </Card>
 
@@ -203,6 +224,12 @@ export const PostCard = () => {
           >
             <Repeat sx={{ fontSize: "28px" }} />
           </IconButton>
+          <IconButton
+            sx={{ position: "absolute", left: 8, top: 8 }}
+            onClick={handleGenerateImg}
+          >
+            <Edit />
+          </IconButton>
           <Stack spacing={1}>
             <Typography fontWeight="bold">Мини-задание:</Typography>
             <Typography textAlign="justify">
@@ -220,19 +247,14 @@ export const PostCard = () => {
           <IconButton>
             <ArrowBack sx={{ fontSize: "32px" }} />
           </IconButton>
-          <IconButton onClick={handleDeletePostData}>
-            <Delete sx={{ fontSize: "32px" }} />
+          <IconButton>
+            <Close sx={{ fontSize: "32px" }} />
           </IconButton>
           <IconButton onClick={handleGeneratePost}>
             <Add sx={{ fontSize: "32px" }} />
           </IconButton>
-
-          <IconButton onClick={handleUpdateStatus}>
-            {currentPost?.status === "1" ? (
-              <CheckBox sx={{ fontSize: "32px" }} />
-            ) : (
-              <CheckBoxOutlined sx={{ fontSize: "32px" }} />
-            )}
+          <IconButton>
+            <CheckBox sx={{ fontSize: "32px" }} />
           </IconButton>
           <IconButton onClick={handleSavePostData}>
             <Save sx={{ fontSize: "40px" }} />

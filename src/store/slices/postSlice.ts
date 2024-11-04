@@ -15,10 +15,27 @@ interface PostState {
   currentPost: PostInterface | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
+  isTitleEditing: boolean;
+  isLoading: {
+    fetchPostInfo: boolean;
+    savePostData: boolean;
+    deletePostData: boolean;
+    generatePostDescriptionData: boolean;
+    generatePostImgData: boolean;
+    generatePostData: boolean;
+  };
+  isError: {
+    fetchPostInfo: boolean;
+    savePostData: boolean;
+    deletePostData: boolean;
+    generatePostDescriptionData: boolean;
+    generatePostImgData: boolean;
+    generatePostData: boolean;
+  };
 }
 
 // Получение инфы о конкретном посте
-export const fetchPostInfo = createAsyncThunk(
+export const fetchPostInfo = createAsyncThunk<PostInterface, string>(
   "post/fetchPostInfo",
   async (hash: string, { rejectWithValue }) => {
     try {
@@ -103,6 +120,23 @@ const initialState: PostState = {
   currentPost: null,
   status: "idle",
   error: null,
+  isTitleEditing: false,
+  isLoading: {
+    fetchPostInfo: false,
+    savePostData: false,
+    deletePostData: false,
+    generatePostDescriptionData: false,
+    generatePostImgData: false,
+    generatePostData: false,
+  },
+  isError: {
+    fetchPostInfo: false,
+    savePostData: false,
+    deletePostData: false,
+    generatePostDescriptionData: false,
+    generatePostImgData: false,
+    generatePostData: false,
+  },
 };
 
 const postSlice = createSlice({
@@ -127,63 +161,123 @@ const postSlice = createSlice({
         state.currentPost.status = action.payload;
       }
     },
+    updateTitleEditing: (state) => {
+      state.isTitleEditing = !state.isTitleEditing;
+    },
+    updateCurrentPostTitle: (state, action: PayloadAction<string>) => {
+      if (state.currentPost) {
+        state.currentPost.title = action.payload;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchPostInfo.pending, (state) => {
         state.status = "loading";
         state.error = null;
+        state.isLoading.fetchPostInfo = true;
+        state.isError.fetchPostInfo = false;
       })
       .addCase(
         fetchPostInfo.fulfilled,
         (state, action: PayloadAction<PostInterface>) => {
           state.status = "succeeded";
           state.post = action.payload;
+          state.isLoading.fetchPostInfo = false;
+          state.currentPost = action.payload;
         }
       )
       .addCase(fetchPostInfo.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
+        state.isLoading.fetchPostInfo = false;
+        state.isError.fetchPostInfo = true;
       })
-
       .addCase(savePostData.pending, (state) => {
         state.status = "loading";
         state.error = null;
+        state.isLoading.savePostData = true;
+        state.isError.savePostData = false;
       })
       .addCase(
         savePostData.fulfilled,
         (state, action: PayloadAction<PostInterface>) => {
           state.status = "succeeded";
           state.post = action.payload;
+          state.isLoading.savePostData = false;
         }
       )
       .addCase(savePostData.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
+        state.isLoading.savePostData = false;
+        state.isError.savePostData = true;
       })
-
       .addCase(deletePostData.pending, (state) => {
         state.status = "loading";
         state.error = null;
+        state.isLoading.deletePostData = true;
+        state.isError.deletePostData = false;
       })
       .addCase(deletePostData.fulfilled, (state) => {
         state.status = "succeeded";
         state.post = null;
+        state.isLoading.deletePostData = false;
       })
       .addCase(deletePostData.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
+        state.isLoading.deletePostData = false;
+        state.isError.deletePostData = true;
+      })
+      .addCase(generatePostDescriptionData.pending, (state) => {
+        state.isLoading.generatePostDescriptionData = true;
+        state.isError.generatePostDescriptionData = false;
+      })
+      .addCase(generatePostDescriptionData.fulfilled, (state) => {
+        state.isLoading.generatePostDescriptionData = false;
+      })
+      .addCase(generatePostDescriptionData.rejected, (state) => {
+        state.isLoading.generatePostDescriptionData = false;
+        state.isError.generatePostDescriptionData = true;
+      })
+      .addCase(generatePostImgData.pending, (state) => {
+        state.isLoading.generatePostImgData = true;
+        state.isError.generatePostImgData = false;
+      })
+      .addCase(generatePostImgData.fulfilled, (state) => {
+        state.isLoading.generatePostImgData = false;
+      })
+      .addCase(generatePostImgData.rejected, (state) => {
+        state.isLoading.generatePostImgData = false;
+        state.isError.generatePostImgData = true;
+      })
+      .addCase(generatePostData.pending, (state) => {
+        state.isLoading.generatePostData = true;
+        state.isError.generatePostData = false;
+      })
+      .addCase(generatePostData.fulfilled, (state) => {
+        state.isLoading.generatePostData = false;
+      })
+      .addCase(generatePostData.rejected, (state) => {
+        state.isLoading.generatePostData = false;
+        state.isError.generatePostData = true;
       });
   },
 });
 
 export const selectCurrentPost = (state: RootState) => state.posts.currentPost;
+export const selectTitleEditing = (state: RootState) =>
+  state.posts.isTitleEditing;
+export const selectIsLoading = (state: RootState) => state.posts.isLoading;
 
 export const {
   updateCurrentPost,
   updateCurrentPostDescription,
   updateCurrentPostImg,
   updateCurrentPostStatus,
+  updateTitleEditing,
+  updateCurrentPostTitle,
 } = postSlice.actions;
 
 export default postSlice.reducer;
