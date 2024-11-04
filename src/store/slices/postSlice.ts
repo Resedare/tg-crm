@@ -15,10 +15,11 @@ interface PostState {
   currentPost: PostInterface | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
+  isTitleEditing: boolean;
 }
 
 // Получение инфы о конкретном посте
-export const fetchPostInfo = createAsyncThunk(
+export const fetchPostInfo = createAsyncThunk<PostInterface, string>(
   "post/fetchPostInfo",
   async (hash: string, { rejectWithValue }) => {
     try {
@@ -103,6 +104,7 @@ const initialState: PostState = {
   currentPost: null,
   status: "idle",
   error: null,
+  isTitleEditing: false,
 };
 
 const postSlice = createSlice({
@@ -125,6 +127,14 @@ const postSlice = createSlice({
     updateCurrentPostStatus: (state, action: PayloadAction<string>) => {
       if (state.currentPost) {
         state.currentPost.status = action.payload;
+      }
+    },
+    updateTitleEditing: (state) => {
+      state.isTitleEditing = !state.isTitleEditing;
+    },
+    updateCurrentPostTitle: (state, action: PayloadAction<string>) => {
+      if (state.currentPost) {
+        state.currentPost.title = action.payload;
       }
     },
   },
@@ -178,12 +188,16 @@ const postSlice = createSlice({
 });
 
 export const selectCurrentPost = (state: RootState) => state.posts.currentPost;
+export const selectTitleEditing = (state: RootState) =>
+  state.posts.isTitleEditing;
 
 export const {
   updateCurrentPost,
   updateCurrentPostDescription,
   updateCurrentPostImg,
   updateCurrentPostStatus,
+  updateTitleEditing,
+  updateCurrentPostTitle,
 } = postSlice.actions;
 
 export default postSlice.reducer;

@@ -141,8 +141,6 @@ export const Sidebar = () => {
                   "&:hover": {
                     width: "100%",
                     backgroundColor: "#f1f1f1",
-                    whiteSpace: "normal",
-                    overflow: "visible",
                   },
                   "&:active": {
                     backgroundColor: "#c2c2c2",
@@ -175,10 +173,6 @@ export const Sidebar = () => {
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       flexShrink: 1,
-                      "&:hover": {
-                        whiteSpace: "normal",
-                        overflow: "visible",
-                      },
                     }}
                   >
                     {post.title}
