@@ -8,6 +8,7 @@ import {
   Typography,
   Box,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import {
@@ -27,6 +28,7 @@ import {
   generatePostImgData,
   savePostData,
   selectCurrentPost,
+  selectIsLoading,
   selectTitleEditing,
   updateCurrentPost,
   updateCurrentPostDescription,
@@ -41,6 +43,7 @@ export const PostCard = () => {
   const isTitleEditing = useAppSelector(selectTitleEditing);
   const [titleText, setTitleText] = useState<string>(currentPost?.title || "");
   const dispatch = useAppDispatch();
+  const isLoading = useAppSelector(selectIsLoading);
 
   useEffect(() => {
     if (currentPost?.title) {
@@ -180,7 +183,15 @@ export const PostCard = () => {
                 value={titleText}
               />
             ) : (
-              <Typography>{currentPost?.title}</Typography>
+              <Stack direction="row" justifyContent={"center"}>
+                {isLoading.generatePostData ? (
+                  <CircularProgress />
+                ) : (
+                  <Typography textAlign="justify">
+                    {currentPost?.description}
+                  </Typography>
+                )}
+              </Stack>
             )}
           </Stack>
         </Card>
@@ -204,7 +215,13 @@ export const PostCard = () => {
           </IconButton>
           <Stack spacing={1}>
             <Typography fontWeight="bold">Изображение</Typography>
-            <Typography>{currentPost?.img}</Typography>
+            <Stack direction="row" justifyContent={"center"}>
+              {isLoading.generatePostImgData || isLoading.generatePostData ? (
+                <CircularProgress />
+              ) : (
+                <Typography textAlign="justify">{currentPost?.img}</Typography>
+              )}
+            </Stack>
           </Stack>
         </Card>
 
@@ -232,9 +249,16 @@ export const PostCard = () => {
           </IconButton>
           <Stack spacing={1}>
             <Typography fontWeight="bold">Мини-задание:</Typography>
-            <Typography textAlign="justify">
-              {currentPost?.description}
-            </Typography>
+            <Stack direction="row" justifyContent={"center"}>
+              {isLoading.generatePostDescriptionData ||
+              isLoading.generatePostData ? (
+                <CircularProgress />
+              ) : (
+                <Typography textAlign="justify">
+                  {currentPost?.description}
+                </Typography>
+              )}
+            </Stack>
           </Stack>
         </Card>
 
