@@ -6,6 +6,7 @@ import {
   generatePostDescription,
   generatePostImg,
   generatePostFull,
+  getText,
 } from "@/app/api/routes";
 import { PostInterface } from "@/app/utils/types";
 import { RootState } from "..";
@@ -108,6 +109,18 @@ export const generatePostData = createAsyncThunk(
   async (category: string, { rejectWithValue }) => {
     try {
       const res = await generatePostFull(category);
+      return res;
+    } catch (e: any) {
+      return rejectWithValue(e.message);
+    }
+  }
+);
+
+export const getTextData = createAsyncThunk(
+  "post/getTextData",
+  async (hash: string, { rejectWithValue }) => {
+    try {
+      const res = await getText(hash);
       return res;
     } catch (e: any) {
       return rejectWithValue(e.message);

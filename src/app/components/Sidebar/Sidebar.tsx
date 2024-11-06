@@ -11,7 +11,6 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
-import { statuses } from "@/app/__mocks__/groups";
 import { getAllPosts } from "@/app/api";
 import { GroupInterface, PostInterface, Status } from "@/app/utils/types";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -21,7 +20,7 @@ import {
   selectIsLoading,
   updateCurrentPost,
 } from "@/store/slices";
-import { categories } from "@/app/utils/constants";
+import { categories, statuses, statusLabels } from "@/app/utils/constants";
 
 export const Sidebar = () => {
   const [currentGroup, setCurrentGroup] = useState<GroupInterface | null>(null);
@@ -132,7 +131,7 @@ export const Sidebar = () => {
             {statuses.map((status) => {
               return (
                 <MenuItem value={status} key={status}>
-                  {status}
+                  {statusLabels[parseFloat(status)]}
                 </MenuItem>
               );
             })}
