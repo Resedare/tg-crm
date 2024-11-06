@@ -6,26 +6,28 @@ import {
   Container,
   Stack,
   Typography,
-  Box,
   TextField,
   CircularProgress,
+  MenuItem,
+  Select,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
-  ArrowBack,
-  ArrowForward,
-  Close,
   CheckBox,
   Repeat,
   Save,
   Add,
   Edit,
+  Delete,
+  FileCopy,
 } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
+  deletePostData,
   generatePostData,
   generatePostDescriptionData,
   generatePostImgData,
+  getTextData,
   savePostData,
   selectCurrentPost,
   selectIsLoading,
@@ -37,19 +39,16 @@ import {
   updateCurrentPostTitle,
   updateTitleEditing,
 } from "@/store/slices/postSlice";
+import { statuses, statusLabels } from "@/app/utils/constants";
 
 export const PostCard = () => {
   const currentPost = useAppSelector(selectCurrentPost);
   const isTitleEditing = useAppSelector(selectTitleEditing);
-  const [titleText, setTitleText] = useState<string>(currentPost?.title || "");
-  const dispatch = useAppDispatch();
   const isLoading = useAppSelector(selectIsLoading);
-
-  useEffect(() => {
-    if (currentPost?.title) {
-      setTitleText(currentPost.title);
-    }
-  }, [currentPost?.title]);
+  const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [titleText, setTitleText] = useState<string>(currentPost?.title || "");
+  const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const dispatch = useAppDispatch();
 
   const handleGeneratePost = () => {
     if (currentPost) {
@@ -90,19 +89,19 @@ export const PostCard = () => {
     }
   };
 
-  const handleUpdateStatus = () => {
+  const handleUpdateStatus = (value: string) => {
     if (currentPost) {
-      dispatch(updateCurrentPostStatus(currentPost.status === "0" ? "1" : "0"));
+      dispatch(updateCurrentPostStatus(value));
     }
   };
 
-  // const handleDeletePostData = () => {
-  //   if (currentPost) {
-  //     dispatch(deletePostData(currentPost.hash)).then((res) =>
-  //       dispatch(updateCurrentPost(null))
-  //     );
-  //   }
-  // };
+  const handleDeletePostData = () => {
+    if (currentPost) {
+      dispatch(deletePostData(currentPost.hash)).then((res) =>
+        dispatch(updateCurrentPost(null))
+      );
+    }
+  };
 
   const handleEditTitle = () => {
     dispatch(updateTitleEditing());
@@ -115,7 +114,41 @@ export const PostCard = () => {
     }
   };
 
-  console.log(currentPost);
+  const handleGetText = () => {
+    if (currentPost) {
+      dispatch(getTextData(currentPost.hash))
+        .unwrap()
+        .then((res) => {
+          setIsCopied(true);
+          navigator.clipboard.writeText(res.text);
+
+          if (copyTimeoutRef.current) {
+            clearTimeout(copyTimeoutRef.current);
+          }
+
+          copyTimeoutRef.current = setTimeout(() => {
+            setIsCopied(false);
+          }, 2000);
+        })
+        .catch((error) => console.error("Failed to copy text:", error));
+    }
+  };
+
+  useEffect(() => {
+    if (currentPost?.title) {
+      setTitleText(currentPost.title);
+    }
+  }, [currentPost?.title]);
+
+  useEffect(() => {
+    setIsCopied(false);
+    return () => {
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+    };
+  }, [currentPost]);
+
   return (
     <Container
       sx={{
@@ -188,7 +221,7 @@ export const PostCard = () => {
                   <CircularProgress />
                 ) : (
                   <Typography textAlign="justify">
-                    {currentPost?.description}
+                    {currentPost?.title}
                   </Typography>
                 )}
               </Stack>
@@ -268,23 +301,36 @@ export const PostCard = () => {
           justifyContent={"space-between"}
           mt={2}
         >
-          <IconButton>
-            <ArrowBack sx={{ fontSize: "32px" }} />
-          </IconButton>
-          <IconButton>
-            <Close sx={{ fontSize: "32px" }} />
+          <IconButton onClick={handleDeletePostData}>
+            <Delete sx={{ fontSize: "32px" }} />
           </IconButton>
           <IconButton onClick={handleGeneratePost}>
             <Add sx={{ fontSize: "32px" }} />
           </IconButton>
-          <IconButton>
-            <CheckBox sx={{ fontSize: "32px" }} />
-          </IconButton>
-          <IconButton onClick={handleSavePostData}>
-            <Save sx={{ fontSize: "40px" }} />
-          </IconButton>
-          <IconButton>
-            <ArrowForward sx={{ fontSize: "32px" }} />
+          <Select
+            onChange={(e) => handleUpdateStatus(e.target.value)}
+            value={currentPost?.status === undefined ? "" : currentPost.status}
+          >
+            {statuses.map((status) => {
+              return (
+                <MenuItem key={status} value={status}>
+                  {statusLabels[parseInt(status)]}
+                </MenuItem>
+              );
+            })}
+          </Select>
+          {isLoading.savePostData ? (
+            <CircularProgress />
+          ) : (
+            <IconButton onClick={handleSavePostData}>
+              <Save sx={{ fontSize: "40px" }} />
+            </IconButton>
+          )}
+          <IconButton
+            onClick={handleGetText}
+            color={isCopied ? "success" : "default"}
+          >
+            <FileCopy sx={{ fontSize: "32px" }} />
           </IconButton>
         </Stack>
       </Stack>

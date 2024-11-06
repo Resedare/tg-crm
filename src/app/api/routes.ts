@@ -115,3 +115,16 @@ export async function deletePost(hash: string) {
   const result = await res.json();
   return result;
 }
+
+export async function getText(hash: string) {
+  const res = await fetch(`http://62.60.157.68:5000/get_text_tg`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+    },
+    body: JSON.stringify({ hash: hash }),
+  });
+
+  const result = await res.json();
+  return result;
+}
