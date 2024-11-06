@@ -40,6 +40,7 @@ import {
   updateTitleEditing,
 } from "@/store/slices/postSlice";
 import { statuses, statusLabels } from "@/app/utils/constants";
+import Image from "next/image";
 
 export const PostCard = () => {
   const currentPost = useAppSelector(selectCurrentPost);
@@ -232,7 +233,7 @@ export const PostCard = () => {
         <Card
           sx={{
             backgroundColor: "lightblue",
-            height: "600px",
+            height: "475px",
             padding: "16px",
             borderRadius: "12px",
             overflowY: "auto",
@@ -252,7 +253,12 @@ export const PostCard = () => {
               {isLoading.generatePostImgData || isLoading.generatePostData ? (
                 <CircularProgress />
               ) : (
-                <Typography textAlign="justify">{currentPost?.img}</Typography>
+                <Image
+                  src={`/images/${currentPost?.img}`}
+                  alt="Kaban"
+                  width={375}
+                  height={375}
+                />
               )}
             </Stack>
           </Stack>
