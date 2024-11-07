@@ -30,6 +30,7 @@ import {
   getTextData,
   savePostData,
   selectCurrentPost,
+  selectDescriptionEditing,
   selectIsLoading,
   selectTitleEditing,
   updateCurrentPost,
@@ -37,6 +38,7 @@ import {
   updateCurrentPostImg,
   updateCurrentPostStatus,
   updateCurrentPostTitle,
+  updateDescriptionEditing,
   updateTitleEditing,
 } from "@/store/slices/postSlice";
 import { statuses, statusLabels } from "@/app/utils/constants";
@@ -45,9 +47,13 @@ import Image from "next/image";
 export const PostCard = () => {
   const currentPost = useAppSelector(selectCurrentPost);
   const isTitleEditing = useAppSelector(selectTitleEditing);
+  const isDescriptionEditing = useAppSelector(selectDescriptionEditing);
   const isLoading = useAppSelector(selectIsLoading);
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [titleText, setTitleText] = useState<string>(currentPost?.title || "");
+  const [descriptionText, setDescriptionText] = useState<string>(
+    currentPost?.description || ""
+  );
   const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const dispatch = useAppDispatch();
 
@@ -107,7 +113,15 @@ export const PostCard = () => {
   const handleEditTitle = () => {
     dispatch(updateTitleEditing());
   };
-
+  const handleEditDescription = () => {
+    dispatch(updateDescriptionEditing());
+  };
+  const handleSaveDescription = (value: string) => {
+    if (currentPost) {
+      dispatch(updateCurrentPostDescription(value));
+      dispatch(updateDescriptionEditing());
+    }
+  };
   const handleSaveTitle = (value: string) => {
     if (currentPost) {
       dispatch(updateCurrentPostTitle(value));
@@ -139,7 +153,11 @@ export const PostCard = () => {
     if (currentPost?.title) {
       setTitleText(currentPost.title);
     }
-  }, [currentPost?.title]);
+
+    if (currentPost?.description) {
+      setDescriptionText(currentPost.description);
+    }
+  }, [currentPost?.title, currentPost?.description]);
 
   useEffect(() => {
     setIsCopied(false);
@@ -280,24 +298,40 @@ export const PostCard = () => {
           >
             <Repeat sx={{ fontSize: "28px" }} />
           </IconButton>
-          <IconButton
-            sx={{ position: "absolute", left: 8, top: 8 }}
-            onClick={handleGenerateImg}
-          >
-            <Edit />
-          </IconButton>
+          {isDescriptionEditing ? (
+            <IconButton
+              sx={{ position: "absolute", left: 8, top: 8 }}
+              onClick={() => handleSaveDescription(descriptionText)}
+            >
+              <Save />
+            </IconButton>
+          ) : (
+            <IconButton
+              sx={{ position: "absolute", left: 8, top: 8 }}
+              onClick={handleEditDescription}
+            >
+              <Edit />
+            </IconButton>
+          )}
           <Stack spacing={1}>
             <Typography fontWeight="bold">Мини-задание:</Typography>
-            <Stack direction="row" justifyContent={"center"}>
-              {isLoading.generatePostDescriptionData ||
-              isLoading.generatePostData ? (
-                <CircularProgress />
-              ) : (
-                <Typography textAlign="justify">
-                  {currentPost?.description}
-                </Typography>
-              )}
-            </Stack>
+            {isDescriptionEditing ? (
+              <TextField
+                onChange={(e) => setDescriptionText(e.target.value)}
+                value={descriptionText}
+              />
+            ) : (
+              <Stack direction="row" justifyContent={"center"}>
+                {isLoading.generatePostDescriptionData ||
+                isLoading.generatePostData ? (
+                  <CircularProgress />
+                ) : (
+                  <Typography textAlign="justify">
+                    {currentPost?.description}
+                  </Typography>
+                )}
+              </Stack>
+            )}
           </Stack>
         </Card>
 
