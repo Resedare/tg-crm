@@ -149,7 +149,8 @@ export const Sidebar = () => {
                 onClick={() => handleChosePost(post.hash)}
                 sx={{
                   padding: "10px",
-                  backgroundColor: "#ffffff",
+                  backgroundColor:
+                    post.hash === currentPost?.hash ? "#cfe2f3" : "#ffffff",
                   borderRadius: "4px",
                   transition: "all 0.3s ease",
                   cursor: "pointer",
