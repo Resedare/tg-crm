@@ -17,6 +17,7 @@ interface PostState {
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
   isTitleEditing: boolean;
+  isDescriptionEditing: boolean;
   isLoading: {
     fetchPostInfo: boolean;
     savePostData: boolean;
@@ -134,6 +135,7 @@ const initialState: PostState = {
   status: "idle",
   error: null,
   isTitleEditing: false,
+  isDescriptionEditing: false,
   isLoading: {
     fetchPostInfo: false,
     savePostData: false,
@@ -181,6 +183,9 @@ const postSlice = createSlice({
       if (state.currentPost) {
         state.currentPost.title = action.payload;
       }
+    },
+    updateDescriptionEditing: (state) => {
+      state.isDescriptionEditing = !state.isDescriptionEditing;
     },
   },
   extraReducers: (builder) => {
@@ -282,6 +287,8 @@ const postSlice = createSlice({
 export const selectCurrentPost = (state: RootState) => state.posts.currentPost;
 export const selectTitleEditing = (state: RootState) =>
   state.posts.isTitleEditing;
+export const selectDescriptionEditing = (state: RootState) =>
+  state.posts.isDescriptionEditing;
 export const selectIsLoading = (state: RootState) => state.posts.isLoading;
 
 export const {
@@ -290,6 +297,7 @@ export const {
   updateCurrentPostImg,
   updateCurrentPostStatus,
   updateTitleEditing,
+  updateDescriptionEditing,
   updateCurrentPostTitle,
 } = postSlice.actions;
 
